@@ -1,3 +1,4 @@
+A tool for configurating ForgeRocks OpenAM instances.
 
 Ready for fullStack example of ForgeRocks Identity Stack Dockerized
 
