@@ -1,9 +1,9 @@
 
 
 This is a docker image that runs the OpenAM config tool to configure a freshly installed 
-instance. The file master.properties is used to configure the server.
+instance. The files master.properties and second.properties is used to configure the server.
 
+https://github.com/ConductAS/identity-stack-dockerized.git
 
-todo: Make this more generic...
+docker run --rm --link openam-svc-a --link openam-svc-b --link opendj --name ssoconfig -v /var/lib/id-stack/repo:/opt/repo conductdocker/ssoconfig-nightly
 
-# ssoconfig-nightly
