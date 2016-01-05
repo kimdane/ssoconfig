@@ -8,6 +8,8 @@ if [ -e "$dir" ]; then
 fi
 
 file=/opt/repo/bin/staging/configurator.zip
+echo $(pwd)
+ls
 if [ -s "$file" ]; then
 		cp "$file" configurator.zip
 else
