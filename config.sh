@@ -36,20 +36,23 @@ done
 
 java -jar openam-configurator-tool*.jar -f master.properties
 
-URL2=${OPENAM_URL:-"http://openam-svc-b:8080/openam"}
-T="$URL2/config/options.htm"
+file=second.properties
+if [ -s "$file" ]; then
+	URL2=${OPENAM_URL:-"http://openam-svc-b:8080/openam"}
+	T="$URL2/config/options.htm"
+	
+	echo Configuring OpenAM $T 
+	TRY=0
+	until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ] || [ $TRY -gt 9 ]; do
+		echo "Waiting for OpenAM server at $T "
+	    sleep 5
+		let "TRY++"
+	done
+	
+	java -jar openam-configurator-tool*.jar -f second.properties
+fi
 
-echo Configuring OpenAM $T 
-TRY=0
-until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ] || [ $TRY -gt 9 ]; do
-	echo "Waiting for OpenAM server at $T "
-    sleep 5
-	let "TRY++"
-done
-
-java -jar openam-configurator-tool*.jar -f second.properties
-
-echo "This container has finished. Please manually kill."
+echo "This container has finished sucessfully!"
 while :
 do
 	sleep 1
