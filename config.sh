@@ -4,6 +4,8 @@ cd /var/tmp
 
 dir=/opt/repo/ssoconfig
 if [ -e "$dir" ]; then
+	rm master.properties
+	rm second.properties
 	cp -rv /opt/repo/ssoconfig/* .
 fi
 
@@ -47,3 +49,8 @@ done
 
 java -jar openam-configurator-tool*.jar -f second.properties
 
+echo "This container has finished. Please manually kill."
+while :
+do
+	sleep 1
+done
