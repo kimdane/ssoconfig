@@ -7,8 +7,10 @@ if [ -e "$dir" ]; then
 	rm master.properties
 	rm second.properties
 	cp -rv /opt/repo/ssoconfig/* .
-	sed -i 's/iam.example.com/'$(openssl x509 -noout -subject -in /opt/repo/ssl/combined.pem | sed "s/^.*CN=\*\./iam./" | sed "s/^.*CN=//" | sed "s/\/.*$//")'/' master.properties
-	sed -i 's/iam.example.com/'$(openssl x509 -noout -subject -in /opt/repo/ssl/combined.pem | sed "s/^.*CN=\*\./iam./" | sed "s/^.*CN=//" | sed "s/\/.*$//")'/' second.properties
+	export FQDN=$(openssl x509 -noout -subject -in /opt/repo/ssl/combined.pem | sed "s/^.*CN=\*\./iam./" | sed "s/^.*CN=//" | sed "s/\/.*$//")
+	export DOMAIN=$(echo $FQDN | sed "s/[^\.]*\.//")
+	cat master.properties | sed 's/iam.example.com/'$DOMAINNAME'/' | sed 's/example.com/'$DOMAIN'/' > master.properties
+	cat second.properties | sed 's/iam.example.com/'$DOMAINNAME'/' | sed 's/example.com/'$DOMAIN'/' > second.properties
 fi
 
 file=/opt/repo/bin/staging/configurator.zip
