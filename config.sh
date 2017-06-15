@@ -3,7 +3,7 @@
 cd /var/tmp
 
 dir=/opt/repo/ssoconfig
-if [ -e "$dir" ]; then
+if [[ -e "$dir" && -f "$dir/master.properties" ]]; then
 	rm master.properties
 	rm second.properties
 	cp -rv /opt/repo/ssoconfig/* .
