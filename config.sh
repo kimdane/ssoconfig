@@ -2,13 +2,14 @@
 
 cd /var/tmp
 
+export FQDN=$(openssl x509 -noout -subject -in /opt/repo/ssl/combined.pem | sed "s/^.*CN=\*\./iam./" | sed "s/^.*CN=//" | sed "s/\/.*$//")
+export DOMAIN=$(echo $FQDN | sed "s/[^\.]*\.//")
+
 dir=/opt/repo/ssoconfig
 if [[ -e "$dir" && -f "$dir/master.properties" ]]; then
 	rm master.properties
 	rm second.properties
 	cp -rv /opt/repo/ssoconfig/* .
-	export FQDN=$(openssl x509 -noout -subject -in /opt/repo/ssl/combined.pem | sed "s/^.*CN=\*\./iam./" | sed "s/^.*CN=//" | sed "s/\/.*$//")
-	export DOMAIN=$(echo $FQDN | sed "s/[^\.]*\.//")
 	cat master.properties | sed 's/iam.example.com/'$DOMAINNAME'/' | sed 's/example.com/'$DOMAIN'/' > master.properties
 	cat second.properties | sed 's/iam.example.com/'$DOMAINNAME'/' | sed 's/example.com/'$DOMAIN'/' > second.properties
 fi
