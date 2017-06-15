@@ -57,6 +57,10 @@ fi
 
 
 echo "This container has finished sucessfully!"
+echo "OpenIDM https://$FQDN/"
+echo "OpenIDM Admin https://$FQDN/admin/"
+echo "OpenAM https://$FQDN/openam/"
+
 while :
 do
 	sleep 1
