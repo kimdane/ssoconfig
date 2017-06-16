@@ -9,8 +9,8 @@ fi
 
 export FQDN=$(openssl x509 -noout -subject -in /opt/repo/ssl/combined.pem | sed "s/^.*CN=\*\./iam./" | sed "s/^.*CN=//" | sed "s/\/.*$//")
 export DOMAIN=$(echo $FQDN | sed "s/[^\.]*\.//")
-sed -i 's/iam.example.com/'"$DOMAINNAME"'/;s/example.com/'"$DOMAIN"'/' master.properties
-sed -i 's/iam.example.com/'"$DOMAINNAME"'/;s/example.com/'"$DOMAIN"'/' second.properties
+sed -i 's/iam.example.com/'"$FQDN"'/;s/example.com/'"$DOMAIN"'/' master.properties
+sed -i 's/iam.example.com/'"$FQDN"'/;s/example.com/'"$DOMAIN"'/' second.properties
 
 
 file=/opt/repo/bin/staging/configurator.zip
