@@ -12,13 +12,16 @@ if [ ! -e "$openambin" ] && [ -s "$openamzip" ]; then
 	echo "Unzipping $openamzip"
 	unzip -qn $openamzip -d /opt/repo/bin
 fi
-if [ -e "$openambin" ] && [ ! -s "$jarfile" ]; then
-	for zipfile in $(ls $openambin/*.zip); do 
-		echo "Unzipping $zipfile"
-		unzip -qn $zipfile -d $openambin
-	done
-	cp -rv $openambin/openam-configurator-tool*.jar ssoconfig.jar
-	ls $openambin/openam-configurator-tool*.jar
+if [ -e "$openambin" ]; then
+	cp -rv $openambin/*/openam-configurator-tool*.jar ssoconfig.jar
+	if [ ! -s "$jarfile" ]; then
+		for zipfile in $(ls $openambin/*.zip); do 
+			echo "Unzipping $zipfile"
+			unzip -qn $zipfile -d $openambin/tools
+		done
+		cp -rv $openambin/*/openam-configurator-tool*.jar ssoconfig.jar
+	fi
+	ls $openambin/*/openam-configurator-tool*.jar
 fi
 if [ -s "$jarfile" ]; then
 	echo "SSOConfig succesfully extracted."
