@@ -51,7 +51,7 @@ until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ] || [ $TRY -gt 9 ]
 	let "TRY++"
 done
 
-java -jar ssoconfig.jar -f master.properties
+java -jar $jarfile -f master.properties
 
 URL2=${OPENAM_URL:-"http://openam-svc-b:8080/openam"}
 T="$URL2/config/options.htm"
@@ -65,7 +65,7 @@ until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ] || [ $TRY -gt 9 ]
 	let "TRY++"
 done
 if [ $TRY -lt 0 ]; then	
-	java -jar ssoconfig.jar -f second.properties
+	java -jar $jarfile -f second.properties
 fi
 
 
