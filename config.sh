@@ -6,20 +6,20 @@ if [ -e "$openamconf" ]; then
 	cp -rv $openamconf/* /var/tmp/
 fi
 
-jarfile=/var/tmp/ssoconfig.jar
+jarfile=$openambin/tools/openam-configurator-tool.jar
 
 if [ ! -e "$openambin" ] && [ -s "$openamzip" ]; then
 	echo "Unzipping $openamzip"
 	unzip -qn $openamzip -d /opt/repo/bin
 fi
 if [ -e "$openambin" ]; then
-	cp -rv $openambin/*/openam-configurator-tool*.jar ssoconfig.jar
+	cp -rv $openambin/*/openam-configurator-tool*.jar $jarfile
 	if [ ! -s "$jarfile" ]; then
 		for zipfile in $(ls $openambin/*.zip); do 
 			echo "Unzipping $zipfile"
 			unzip -qn $zipfile -d $openambin/tools
 		done
-		cp -rv $openambin/*/openam-configurator-tool*.jar ssoconfig.jar
+		cp -rv $openambin/*/openam-configurator-tool*.jar $jarfile
 	fi
 	ls $openambin/*/openam-configurator-tool*.jar
 fi
@@ -38,7 +38,6 @@ if [ -s "$cert" ]; then
 	sed -i 's/iam.example.com/'"$FQDN"'/;s/example.com/'"$DOMAIN"'/' master.properties
 	sed -i 's/iam.example.com/'"$FQDN"'/;s/example.com/'"$DOMAIN"'/' second.properties
 fi
-
 # Optionally pass in URL of OpenAM server
 URL=${OPENAM_URL:-"http://openam-svc-a:8080/openam"}
 T="$URL/config/options.htm"
@@ -51,7 +50,8 @@ until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ] || [ $TRY -gt 9 ]
 	let "TRY++"
 done
 
-java -jar $jarfile -f master.properties
+#cd $openambin/tools
+java -jar $jarfile -f /var/tmp/master.properties
 
 URL2=${OPENAM_URL:-"http://openam-svc-b:8080/openam"}
 T="$URL2/config/options.htm"
@@ -65,7 +65,7 @@ until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ] || [ $TRY -gt 9 ]
 	let "TRY++"
 done
 if [ $TRY -lt 0 ]; then	
-	java -jar $jarfile -f second.properties
+	java -jar $jarfile -f /var/tmp/second.properties
 fi
 
 
