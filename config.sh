@@ -2,30 +2,17 @@
 
 cd /var/tmp
 
-file=/opt/repo/ssoconfig/master.properties
-if [ -s "$file" ]; then
-	cp -rv /opt/repo/ssoconfig/* /var/tmp/
+if [ -e "$openamconf" ]; then
+	cp -rv $openamconf/* /var/tmp/
 fi
 
-export FQDN=$(openssl x509 -noout -subject -in /opt/repo/ssl/combined.pem | sed "s/^.*CN=\*\./iam./" | sed "s/^.*CN=//" | sed "s/\/.*$//")
-export DOMAIN=$(echo $FQDN | sed "s/[^\.]*\.//")
-sed -i 's/iam.example.com/'"$FQDN"'/;s/example.com/'"$DOMAIN"'/' master.properties
-sed -i 's/iam.example.com/'"$FQDN"'/;s/example.com/'"$DOMAIN"'/' second.properties
-
-
-file=/opt/repo/bin/staging/configurator.zip
-echo $(pwd)
-ls
-if [ -s "$file" ]; then
-		cp "$file" configurator.zip
-else
-	# Download AM 13 configurator from maven build
-	curl http://maven.forgerock.org/repo/simple/snapshots/org/forgerock/openam/openam-distribution-ssoconfiguratortools/13.0.0-SNAPSHOT/ \
-   | grep -o 'href=.*\.zip\"' | grep -o 'openam.*zip' | \
- 	xargs -I % curl -o /var/tmp/configurator.zip  \
- 	http://maven.forgerock.org/repo/simple/snapshots/org/forgerock/openam/openam-distribution-ssoconfiguratortools/13.0.0-SNAPSHOT/%
+cert=/opt/repo/ssl/combined.pem
+if [ -s "$cert" ]; then
+	export FQDN=$(openssl x509 -noout -subject -in $cert | sed "s/^.*CN=\*\./iam./" | sed "s/^.*CN=//" | sed "s/\/.*$//")
+	export DOMAIN=$(echo $FQDN | sed "s/[^\.]*\.//")
+	sed -i 's/iam.example.com/'"$FQDN"'/;s/example.com/'"$DOMAIN"'/' master.properties
+	sed -i 's/iam.example.com/'"$FQDN"'/;s/example.com/'"$DOMAIN"'/' second.properties
 fi
-unzip configurator.zip
 
 # Optionally pass in URL of OpenAM server
 
@@ -38,7 +25,7 @@ until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ]; do
     sleep 5
 done
 
-java -jar openam-configurator-tool*.jar -f master.properties
+java -jar $openambin/*/openam-configurator-tool*.jar -f master.properties
 
 URL2=${OPENAM_URL:-"http://openam-svc-b:8080/openam"}
 T="$URL2/config/options.htm"
@@ -52,7 +39,7 @@ until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ] || [ $TRY -gt 9 ]
 	let "TRY++"
 done
 if [ $TRY -lt 9 ]; then	
-	java -jar openam-configurator-tool*.jar -f second.properties
+	java -jar $openambin/*/openam-configurator-tool*.jar -f second.properties
 fi
 
 
