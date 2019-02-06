@@ -44,7 +44,7 @@ URL=${OPENAM_URL:-"http://openam-svc-a:8080/openam"}
 T="$URL/config/options.htm"
 
 echo Configuring OpenAM $T 
-TRY=8
+TRY=0
 until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ] || [ $TRY -gt 9 ]; do
 	echo "Waiting for OpenAM server at $T "
     sleep 5
@@ -58,13 +58,13 @@ T="$URL2/config/options.htm"
 
 # Removing this until we do multiple OpenAMs
 #echo Configuring OpenAM $T 
-TRY=6
+#TRY=10
 until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ] || [ $TRY -gt 9 ]; do
 	echo "Waiting for OpenAM server at $T "
     sleep 5
 	let "TRY++"
 done
-if [ $TRY -lt 5 ]; then	
+if [ $TRY -lt 0 ]; then	
 	java -jar ssoconfig.jar -f second.properties
 fi
 
