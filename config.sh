@@ -47,7 +47,7 @@ echo Configuring OpenAM $T
 TRY=0
 until [ $(curl -s -o /dev/null -w "%{http_code}" $T ) == 200 ] || [ $TRY -gt 9 ]; do
 	echo "Waiting for OpenAM server at $T "
-    sleep 5
+    sleep 6
 	let "TRY++"
 done
 
